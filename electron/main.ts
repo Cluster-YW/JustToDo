@@ -1,10 +1,12 @@
 import { app, BrowserWindow } from 'electron'
-import path from 'path'
 
 // 保持对窗口对象的全局引用，防止被垃圾回收
 let mainWindow: BrowserWindow | null = null
 
 function createWindow() {
+  console.log('VITE_DEV_SERVER_URL:', process.env.VITE_DEV_SERVER_URL)
+  console.log('All env:', process.env)
+
   // 创建浏览器窗口
   mainWindow = new BrowserWindow({
     width: 400,
@@ -20,15 +22,20 @@ function createWindow() {
   })
 
   // 加载应用
-  if (process.env.VITE_DEV_SERVER_URL) {
-    // 开发环境：加载 Vite 开发服务器 URL
-    mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
-    // 打开开发者工具（方便调试）
-    mainWindow.webContents.openDevTools()
-  } else {
-    // 生产环境：加载打包后的 index.html（暂时不会走到这里）
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
-  }
+  // 兼容新旧版本 electron-vite
+    const devServerUrl = process.env.VITE_DEV_SERVER_URL || process.env.ELECTRON_RENDERER_URL
+
+    if (devServerUrl) {
+        console.log('Loading URL:', devServerUrl)
+        mainWindow.loadURL(devServerUrl)
+        mainWindow.webContents.openDevTools()
+    } else {
+        console.log('No dev server URL found')
+    }
+//   else {
+//     // 生产环境：加载打包后的 index.html（暂时不会走到这里）
+//     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
+//   }
 
   // 当窗口关闭时触发
   mainWindow.on('closed', () => {
