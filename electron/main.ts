@@ -11,14 +11,18 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 400,
     height: 600,
+    frame: false,           // 去掉系统标题栏和边框
+    thickFrame: true,
+    alwaysOnTop: true,      // 置顶显示
+    transparent: true,      // 允许透明背景（配合 CSS 实现毛玻璃）
+    resizable: true,        // 允许调整大小（四边可拖拽）
+    minimizable: false,     // 禁用最小化按钮（符合你的需求）
+    maximizable: false,     // 禁用最大化按钮（浮动窗口不需要）
+    skipTaskbar: false,     // 是否隐藏任务栏图标（false = 显示在任务栏）
     webPreferences: {
       nodeIntegration: true,  // 允许在渲染进程使用 Node API（开发时方便）
       contextIsolation: false, // 关闭上下文隔离（MVP阶段简化配置）
     },
-    // 以下配置先注释掉，下一阶段再开启（现在先验证基础功能）
-    // frame: false,           // 无边框（稍后开启）
-    // alwaysOnTop: true,      // 置顶（稍后开启）
-    // transparent: true,      // 透明（稍后开启）
   })
 
   // 加载应用
