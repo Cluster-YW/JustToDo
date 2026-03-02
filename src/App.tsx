@@ -3,7 +3,7 @@ import "./App.css";
 import useAppStore from "./stores/useAppStore.ts";
 
 function App() {
-  const { todos, addTodo, toggleTodo, getCompletedCount } = useAppStore();
+  const { getSortedTodos, addTodo, toggleTodo, getCompletedCount } = useAppStore();
   const [inputValue, setInputValue] = useState("");
 
   const handleAdd = () => {
@@ -17,6 +17,8 @@ function App() {
       handleAdd();
     }
   };
+
+  const sortedTodos = getSortedTodos();
 
   return (
     <div className="app-container">
@@ -49,15 +51,15 @@ function App() {
 
         <div className="task-count-area">
           <span className="task-count">
-            {todos.length - getCompletedCount()}/{todos.length}
+            {sortedTodos.length - getCompletedCount()}/{sortedTodos.length}
           </span>
         </div>
 
         <div className="task-list">
-          {todos.length === 0 ? (
+          {sortedTodos.length === 0 ? (
             <div className="empty-tip">No Task Yet</div>
           ) : (
-            todos.map((todo) => (
+            sortedTodos.map((todo) => (
               <div
                 key={todo.id}
                 className={`task-item ${todo.completed ? "completed" : ""}`}
