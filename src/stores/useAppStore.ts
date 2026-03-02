@@ -15,6 +15,7 @@ interface AppState {
   addTodo: (title: string) => void;
   toggleTodo: (id: string) => void;
   deleteTodo: (id: string) => void;
+  updateTodoTitle: (id: string, title: string) => void;
   getSortedTodos: () => Todo[];
   getCompletedCount: () => number;
 }
@@ -68,6 +69,15 @@ const useAppStore = create<AppState>()((set, get) => ({
       return b.createdAt - a.createdAt;
     });
   },
+
+  updateTodoTitle: (id: string, title: string) => {
+    set((state) => ({
+      ...state,
+      todos: state.todos.map((todo) =>
+        todo.id == id ? { ...todo, title } : todo,
+      )
+    }))
+  }
 }));
 
 export default useAppStore;

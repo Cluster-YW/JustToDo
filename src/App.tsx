@@ -1,10 +1,11 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 import "./App.css";
+import { TaskItem } from "./components/TaskItem.tsx";
 import useAppStore from "./stores/useAppStore.ts";
 
 function App() {
-  const { getSortedTodos, addTodo, toggleTodo, getCompletedCount } =
+  const { getSortedTodos, addTodo, getCompletedCount } =
     useAppStore();
   const [inputValue, setInputValue] = useState("");
 
@@ -59,33 +60,9 @@ function App() {
 
         <div className="task-list">
           <AnimatePresence mode="popLayout">
-            {sortedTodos.length === 0 ? (
-              <div className="empty-tip">No Task Yet</div>
-            ) : (
-              sortedTodos.map((todo) => (
-                <motion.div
-                  key={todo.id}
-                  layout
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: todo.completed ? 0.6 : 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{duration: 0.3}}
-                  className={`task-item ${todo.completed ? "completed" : ""}`}
-                  onClick={() => toggleTodo(todo.id)}
-                >
-                  <span
-                    className={`checkbox ${todo.completed ? "checked" : ""}`}
-                  >
-                    <span>{todo.completed ? "✔" : ""}</span>
-                  </span>
-                  <span
-                    className={`task-title ${todo.completed ? "completed-text" : ""}`}
-                  >
-                    {todo.title}
-                  </span>
-                </motion.div>
-              ))
-            )}
+            {sortedTodos.map((todo) => (
+              <TaskItem key={todo.id} todo={todo} /> // 使用新组件
+            ))}
           </AnimatePresence>
         </div>
       </div>
