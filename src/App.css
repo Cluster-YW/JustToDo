@@ -9,7 +9,8 @@
   padding: 0 12px;
   /* 关键：让这个区域可拖拽窗口 */
   -webkit-app-region: drag;
-  user-select: none;  /* 防止拖拽时选中文字 */
+  user-select: none;
+  /* 防止拖拽时选中文字 */
 }
 
 .title {
@@ -64,19 +65,91 @@
   gap: 16px;
 }
 
-/* 按钮样式美化 */
-button {
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: #646cff;
-  color: white;
-  cursor: pointer;
-  transition: all 0.25s;
+.task-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #BBB;
+  margin-bottom: 16px;
 }
 
-button:hover {
-  background: #535bf2;
+.input-area {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.task-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.8);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.task-input:focus {
+  border-color: #646cff;
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 1);
+}
+
+.add-btn {
+  padding: 10px 20px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  background: #8b90f7;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+}
+
+.add-btn:active {
+  transform: translateY(0);
+}
+
+.task-list {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty-tip{
+  text-align:  center;
+  color: #999;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+.task-item {
+  padding: 8px 15px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display:  flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.task-item:hover{
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-title {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
 }
