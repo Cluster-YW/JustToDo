@@ -3,7 +3,7 @@ import "./App.css";
 import useAppStore from "./stores/useAppStore.ts";
 
 function App() {
-  const { todos, addTodo } = useAppStore();
+  const { todos, addTodo, toggleTodo, getCompletedCount } = useAppStore();
   const [inputValue, setInputValue] = useState("");
 
   const handleAdd = () => {
@@ -32,7 +32,6 @@ function App() {
 
       {/* 主内容区 */}
       <div className="content">
-        <div className="task-count">Count: {todos.length}</div>
         <div className="input-area">
           <input
             type="text"
@@ -48,14 +47,32 @@ function App() {
           </button>
         </div>
 
+        <div className="task-count-area">
+          <span className="task-count">
+            {todos.length - getCompletedCount()}/{todos.length}
+          </span>
+        </div>
+
         <div className="task-list">
-          {todos.length === 0 ?
-            (<div className="empty-tip">No Task Yet</div>) : (
-              todos.map((todo) => (
-                <div key={todo.id} className="task-item">
-                  <span className="task-title">{todo.title}</span>
-                </div>
-              ))
+          {todos.length === 0 ? (
+            <div className="empty-tip">No Task Yet</div>
+          ) : (
+            todos.map((todo) => (
+              <div
+                key={todo.id}
+                className={`task-item ${todo.completed ? "completed" : ""}`}
+                onClick={() => toggleTodo(todo.id)}
+              >
+                <span className={`checkbox ${todo.completed ? "checked" : ""}`}>
+                  <span>{todo.completed ? "✔" : ""}</span>
+                </span>
+                <span
+                  className={`task-title ${todo.completed ? "completed-text" : ""}`}
+                >
+                  {todo.title}
+                </span>
+              </div>
+            ))
           )}
         </div>
       </div>
