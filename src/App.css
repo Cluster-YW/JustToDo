@@ -176,6 +176,7 @@
 
 .checkbox span {
   transform: translate(0px, -2px);
+  font-weight: bold;
 }
 
 .task-item:hover .checkbox {
@@ -207,6 +208,7 @@
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
+  font-weight: bold;
 }
 
 .task-item:hover .hover-edit-btn {

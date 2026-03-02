@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAppStore from "../stores/useAppStore";
 
 interface TaskItemProps {
@@ -13,6 +13,7 @@ interface TaskItemProps {
 
 // export component with an argument of todo
 export const TaskItem = ({ todo }: TaskItemProps) => {
+  const itemRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(todo.title);
   const [isDeleteConfirming, setIsDeleteConfirming] = useState(false);
@@ -33,21 +34,41 @@ export const TaskItem = ({ todo }: TaskItemProps) => {
 
   const handleCancel = () => {
     setEditTitle(todo.title);
-    setIsEditing(true);
+    setIsEditing(false);
     setIsDeleteConfirming(false);
   };
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
     if (isDeleteConfirming) {
       deleteTodo(todo.id);
     } else {
       setIsDeleteConfirming(true);
+      // cancel confirming after 3 seconds
+      setTimeout(() => setIsDeleteConfirming(false), 3000);
     }
   };
+
+  useEffect(() => {
+    if (!isEditing) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (itemRef.current && !itemRef.current.contains(event.target as Node)) {
+        handleCancel();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isEditing]);
 
   return (
     <motion.div
       key={todo.id}
+      ref={itemRef}
       layout
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: todo.completed ? 0.6 : 1, x: 0 }}
@@ -74,12 +95,17 @@ export const TaskItem = ({ todo }: TaskItemProps) => {
           <button
             className={`delete-btn ${isDeleteConfirming ? "confirming" : ""}`}
             onClick={handleDeleteClick}
+            type="button"
           >
             {isDeleteConfirming ? "确认删除?" : "🗑️"}
           </button>
 
           <div className="edit-actions">
-            <button className="save-btn" disabled={editTitle.trim() == ""}>
+            <button
+              className="save-btn"
+              onClick={handleSave}
+              disabled={editTitle.trim() === ""}
+            >
               ✓
             </button>
           </div>
@@ -89,7 +115,7 @@ export const TaskItem = ({ todo }: TaskItemProps) => {
           <span
             className={`checkbox ${todo.completed ? "checked" : ""}`}
             onClick={(e) => {
-              e.stopPropagation(); 
+              e.stopPropagation();
               toggleTodo(todo.id);
             }}
           >
