@@ -157,8 +157,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.task-item.completed {
-}
+.task-item.completed {}
 
 .checkbox {
   width: 14px;
@@ -221,9 +220,10 @@
 
 /* Edit Mode 样式 */
 .task-item.editing {
-  flex-wrap: wrap; /* 允许下方展开 */
+  flex-wrap: wrap;
+  /* 允许下方展开 */
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .edit-input {
@@ -281,9 +281,19 @@
 
 /* 删除确认时的抖动动画（C方案） */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-2px);
+  }
+
+  75% {
+    transform: translateX(2px);
+  }
 }
 
 /* Feature 面板（Edit Mode 展开区域） */
@@ -291,5 +301,155 @@
   width: 100%;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ========== Addon 紧凑视图（View Mode）========== */
+
+.task-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  /* 防止内容溢出 */
+}
+
+.addon-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.addon-chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(100, 108, 255, 0.1);
+  border-radius: 12px;
+  color: #646cff;
+  border: 1px solid rgba(100, 108, 255, 0.2);
+  white-space: nowrap;
+  /* 不换行 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 任务完成时 Chip 变灰 */
+.task-item.completed .addon-chip {
+  opacity: 0.5;
+  background: rgba(0, 0, 0, 0.05);
+  color: #999;
+  border-color: transparent;
+}
+
+/* ========== Addon 编辑区域（Edit Mode）========== */
+
+.addon-edit-panel {
+  width: 100%;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.addon-edit-item {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.addon-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.addon-remove-btn {
+  background: transparent;
+  border: none;
+  color: #ff5f57;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.addon-remove-btn:hover {
+  background: rgba(255, 95, 87, 0.1);
+}
+
+/* 添加 Addon 按钮 */
+.add-addon-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(100, 108, 255, 0.1);
+  border: 1px dashed rgba(100, 108, 255, 0.3);
+  border-radius: 8px;
+  color: #646cff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.add-addon-btn:hover {
+  background: rgba(100, 108, 255, 0.2);
+  border-style: solid;
+}
+
+/* Addon 选择器 */
+.addon-selector {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.addon-selector-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.addon-selector-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.addon-selector-btn {
+  padding: 6px 12px;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addon-selector-btn:hover {
+  background: #535bf2;
+  transform: translateY(-1px);
+}
+
+.addon-selector-cancel {
+  padding: 6px 12px;
+  background: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.addon-selector-cancel:hover {
+  background: rgba(0, 0, 0, 0.05);
 }

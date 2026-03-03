@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { addonRegistry, type RegisteredAddonType } from "../addons/registry";
+import type { Addon } from "../addons/types";
 
 interface Todo {
   id: string;
@@ -7,6 +9,7 @@ interface Todo {
   createdAt: number; // timestamp in milliseconds
   dueDate?: string; // ISO string
   category?: string;
+  addons: Addon[];
 }
 
 interface AppState {
@@ -18,6 +21,11 @@ interface AppState {
   updateTodoTitle: (id: string, title: string) => void;
   getSortedTodos: () => Todo[];
   getCompletedCount: () => number;
+
+  // Addons
+  addAddon: (taskId: string, type: RegisteredAddonType) => void;
+  updateAddon: (taskId: string, addonId: string, newData: Addon) => void;
+  removeAddon: (taskId: string, addonId: string) => void;
 }
 
 const useAppStore = create<AppState>()((set, get) => ({
@@ -31,6 +39,7 @@ const useAppStore = create<AppState>()((set, get) => ({
       title,
       completed: false,
       createdAt: Date.now(),
+      addons: [],
     };
 
     set((state) => ({
@@ -74,10 +83,49 @@ const useAppStore = create<AppState>()((set, get) => ({
     set((state) => ({
       ...state,
       todos: state.todos.map((todo) =>
-        todo.id == id ? { ...todo, title } : todo,
-      )
-    }))
-  }
+        todo.id === id ? { ...todo, title } : todo,
+      ),
+    }));
+  },
+
+  // ********** Addons **********
+  addAddon: (taskId: string, type: RegisteredAddonType) => {
+    const meta = addonRegistry[type];
+    const newAddon = meta.createDefault();
+
+    set((state) => ({
+      ...state,
+      todos: state.todos.map((todo) =>
+        todo.id === taskId
+          ? { ...todo, addons: [...todo.addons, newAddon] }
+          : todo,
+      ),
+    }));
+  },
+
+  updateAddon: (taskId: string, addonId: string, newData: Addon) => {
+    set((state) => ({
+      ...state,
+      todos: state.todos.map((todo) => {
+        if (todo.id === taskId) return todo;
+        const newAddons = todo.addons.map((addon) =>
+          addon.id === addonId ? newData : addon,
+        );
+        return { ...todo, addons: newAddons };
+      }),
+    }));
+  },
+
+  removeAddon: (taskId: string, addonId: string) => {
+    set((state) => ({
+      ...state,
+      todos: state.todos.map((todo) => {
+        if (todo.id === taskId) return todo;
+        const newAddons = todo.addons.filter((addon) => addon.id !== addonId);
+        return { ...todo, addons: newAddons };
+      }),
+    }));
+  },
 }));
 
 export default useAppStore;

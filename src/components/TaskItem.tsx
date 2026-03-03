@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import {
+  addonRegistry,
+  addonTypeList,
+  type RegisteredAddonType,
+} from "../addons/registry";
+import type { Addon } from "../addons/types";
 import useAppStore from "../stores/useAppStore";
 
 interface TaskItemProps {
@@ -8,6 +14,7 @@ interface TaskItemProps {
     title: string;
     completed: boolean;
     createdAt: number;
+    addons: Addon[];
   };
 }
 
@@ -18,12 +25,22 @@ export const TaskItem = ({ todo }: TaskItemProps) => {
   const [editTitle, setEditTitle] = useState(todo.title);
   const [isDeleteConfirming, setIsDeleteConfirming] = useState(false);
 
-  const { toggleTodo, deleteTodo, updateTodoTitle } = useAppStore();
+  const [showAddonSelector, setShowAddonSelector] = useState(false);
+
+  const {
+    toggleTodo,
+    deleteTodo,
+    updateTodoTitle,
+    addAddon,
+    updateAddon,
+    removeAddon,
+  } = useAppStore();
 
   const enterEditMode = () => {
     setEditTitle(todo.title);
     setIsEditing(true);
     setIsDeleteConfirming(false);
+    setShowAddonSelector(false);
   };
 
   const handleSave = () => {
@@ -48,6 +65,19 @@ export const TaskItem = ({ todo }: TaskItemProps) => {
       // cancel confirming after 3 seconds
       setTimeout(() => setIsDeleteConfirming(false), 3000);
     }
+  };
+
+  const handleAddAddon = (type: RegisteredAddonType) => {
+    addAddon(todo.id, type);
+    setShowAddonSelector(false);
+  };
+
+  const handleUpdateAddon = (addonId: string, newData: Addon) => {
+    updateAddon(todo.id, addonId, newData);
+  };
+
+  const handleRemoveAddon = (addonId: string) => {
+    removeAddon(todo.id, addonId);
   };
 
   useEffect(() => {
@@ -109,6 +139,67 @@ export const TaskItem = ({ todo }: TaskItemProps) => {
               ✓
             </button>
           </div>
+
+          <div className="addon-edit-panel">
+            {/* 已挂载的 Addon 编辑器 */}
+            {todo.addons.map((addon) => {
+              const meta = addonRegistry[addon.type];
+              const Component = meta.component;
+              return (
+                <div key={addon.id} className="addon-edit-item">
+                  <div className="addon-edit-header">
+                    <span>
+                      {meta.icon} {meta.label}
+                    </span>
+                    <button
+                      className="addon-remove-btn"
+                      onClick={() => handleRemoveAddon(addon.id)}
+                    >
+                      删除
+                    </button>
+                  </div>
+                  <Component
+                    data={addon}
+                    mode="edit"
+                    onUpdate={(newData) => handleUpdateAddon(addon.id, newData)}
+                    onRemove={() => handleRemoveAddon(addon.id)}
+                    isTaskCompleted={todo.completed}
+                  />
+                </div>
+              );
+            })}
+
+            {/* 添加新 Addon 的 UI */}
+            {showAddonSelector ? (
+              <div className="addon-selector">
+                <div className="addon-selector-label">选择要添加的功能：</div>
+                <div className="addon-selector-buttons">
+                  {addonTypeList.map((type) => (
+                    <button
+                      key={type}
+                      className="addon-selector-btn"
+                      onClick={() => handleAddAddon(type)}
+                    >
+                      {addonRegistry[type].icon} {addonRegistry[type].label}
+                    </button>
+                  ))}
+                  <button
+                    className="addon-selector-cancel"
+                    onClick={() => setShowAddonSelector(false)}
+                  >
+                    取消
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                className="add-addon-btn"
+                onClick={() => setShowAddonSelector(true)}
+              >
+                + 添加功能
+              </button>
+            )}
+          </div>
         </>
       ) : (
         <>
@@ -128,6 +219,26 @@ export const TaskItem = ({ todo }: TaskItemProps) => {
           >
             {todo.title}
           </span>
+
+          {todo.addons.length > 0 && (
+            <div className="addon-chips">
+              {todo.addons.map((addon) => {
+                const meta = addonRegistry[addon.type];
+                const Component = meta.component;
+                return (
+                  <div key={addon.id} className="addon-chip">
+                    <Component
+                      data={addon}
+                      mode="compact"
+                      onUpdate={() => {}} // Compact 模式不更新
+                      onRemove={() => {}} // Compact 模式不删除
+                      isTaskCompleted={todo.completed}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           <button className="hover-edit-btn" onClick={enterEditMode}>
             ···
